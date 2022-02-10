@@ -4,10 +4,6 @@ from utils import math
 def generate_keys(p: int, q: int) -> list[tuple[int]]:
     """
     Given two prime numbers, generate the private and public keys.
-    
-    Instead of reusing the methods generate_private_key and
-    generate_public_key it computes the intermediate values,
-    to avoid repeated computations.
 
     Args:
         p (int): Prime number
@@ -23,49 +19,32 @@ def generate_keys(p: int, q: int) -> list[tuple[int]]:
     n = p * q
     tot = (p - 1) * (q - 1)
     
-    e = math.select_smallest_coprime(tot, lower=2, upper=tot)
+    e = math.select_coprime(tot)
     d = pow(e, -1, tot)
     
     return (n, d), (n, e)
 
 
-def generate_private_key(p: int, q: int) -> tuple[int]:
+def encrypt(text: str, pkey: tuple[int]) -> str:
+    pass
+
+
+def decrypt(text: str, pkey: tuple[int]) -> str:
+    pass
+
+
+def _encode_text(text: str) -> list[int]:
     """
-    Given two prime numbers, generate a private key.
+    Converts the text to literal values to numerical values.
+    Uses the table conversion A -> 1, B -> 2, ...
 
     Args:
-        p (int): Prime number
-        q (int): Prime number
+        text (str): Text to be encoded.
 
     Returns:
-        tuple: A tuple (n, d) representing the private key
+        list[int]: Encoded text as a list of ints.
+            Each position corresponds to a character
+            from input text.
     """
     
-    n = p * q
-    tot = (p - 1) * (q - 1)
-    
-    e = math.select_smallest_coprime(tot, lower=2, upper=tot)
-
-    d = pow(e, -1, tot)
-    
-    return (n, d)
-
-
-def generate_public_key(p: int, q: int) -> tuple[int]:
-    """
-    Given two prime numbers, generate a public key.
-
-    Args:
-        p (int): Prime number
-        q (int): Prime number
-
-    Returns:
-        tuple: A tuple (n, e) representing the public key
-    """
-    
-    n = p * q
-    tot = (p - 1) * (q - 1)
-    
-    e = math.select_smallest_coprime(tot, lower=2, upper=tot)
-    
-    return (n, e)
+    return [ord(c) - 63 for c in text]
