@@ -31,7 +31,7 @@ You can also type `python main.py --help` to see usage instructions, or `python 
 
 ### Commands
 
-In this section, a brief explanation of the available commands is given. Additionally, we provide an [end-to-end example](/blob/master/usage-example.md) of their usage.
+In this section, a brief explanation of the available commands is given. Additionally, we provide an [end-to-end example](https://github.com/jeanchilger/rsa/blob/master/usage-guide.md) of their usage.
 
 #### `init`
 
@@ -84,4 +84,4 @@ The available options are:
 
 ## License
 
-This project is licensed under the MIT license. See [LICENSE](/blob/master/LICENSE) for more information.
+This project is licensed under the MIT license. See [LICENSE](https://github.com/jeanchilger/rsa/blob/master/LICENSE) for more information.
