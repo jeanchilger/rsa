@@ -1,6 +1,6 @@
 # RSA Cryptosystem
 
-Implementation of RSA cryptosystem in python.
+Implementation of RSA cryptosystem in python. This may not be a safe, production-ready implementation. Developed for learning purposes.
 
 ## Installing
 
@@ -31,7 +31,7 @@ You can also type `python main.py --help` to see usage instructions, or `python 
 
 ### Commands
 
-In this section, a brief explanation of the available commands is given. Additionally, we provide an [end-to-end example]() of their usage.
+In this section, a brief explanation of the available commands is given. Additionally, we provide an [end-to-end example](/blob/master/usage-example.md) of their usage.
 
 #### `init`
 
