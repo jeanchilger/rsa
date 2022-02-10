@@ -12,7 +12,7 @@ def select_coprime(x: int) -> int:
     """
     
     # 65537 is widely used
-    if x < 65537 and math.gcd(x, 65537) == 1:
+    if x > 65537 and math.gcd(x, 65537) == 1:
         return 65537
     
     for y in range(3, x):
