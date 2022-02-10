@@ -94,7 +94,12 @@ def encrypt(
     else:
         key = pkey
         
-    key = tuple(map(int, base64.b64decode(key).decode("utf-8").split(",")))
+    if key.startswith("("):
+        # Converts from string to tuple of int
+        key = tuple(map(int, map(str.strip, key[1:-1].split(","))))
+    else:
+        # Converts from base64 string to tuple of int
+        key = tuple(map(int, base64.b64decode(key).decode("utf-8").split(",")))
     
     encrypted_text = rsa.encrypt(input_text, key)
     
@@ -119,6 +124,10 @@ def decrypt(
         help="Private key to be used for decryptation. If omitted, the private key from environment will be used."
     )
 ) -> None:
+    """
+    Decrypts a given text accordingly with RSA rules.
+    """
+    
     input_text = None
     if file_helper.is_path(src):
         input_text = file_helper.read_txt_file(src)
@@ -131,7 +140,12 @@ def decrypt(
     else:
         key = pkey
     
-    key = tuple(map(int, base64.b64decode(key).decode("utf-8").split(",")))
+    if key.startswith("("):
+        # Converts from string to tuple of int
+        key = tuple(map(int, map(str.strip, key[1:-1].split(","))))
+    else:
+        # Converts from base64 string to tuple of int
+        key = tuple(map(int, base64.b64decode(key).decode("utf-8").split(",")))
     
     decrypted_text = rsa.decrypt(input_text, key)
     
