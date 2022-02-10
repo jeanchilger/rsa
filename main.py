@@ -1,4 +1,5 @@
 import base64
+import sympy
 import typer
 from pathlib import Path
 from src import rsa
@@ -25,7 +26,15 @@ def init() -> None:
             raise typer.Exit()
     
     p = typer.prompt("Input the first prime number")
+    while not sympy.isprime(int(p)):
+        typer.secho("ERROR! The number provided is not a prime!", fg=typer.colors.RED)
+        p = typer.prompt("Input the first prime number")
+        
+        
     q = typer.prompt("Input the second prime number")
+    while not sympy.isprime(int(q)):
+        typer.secho("ERROR! The number provided is not a prime!", fg=typer.colors.RED)
+        q = typer.prompt("Input the second prime number")
 
     environ.set_config("args", "p", p)
     environ.set_config("args", "q", q)
@@ -40,11 +49,14 @@ def init() -> None:
     
     environ.set_config("keys", "private", private_key_b64.decode("utf-8"))
     environ.set_config("keys", "public", public_key_b64.decode("utf-8"))
-    
-    typer.echo(f"Private key: {private_key}")
-    typer.echo(f"Private key (base64): {private_key_b64}")
-    typer.echo(f"Public key: {public_key}")
-    typer.echo(f"Public key (base64): {public_key_b64}")
+
+    typer.echo("Generating keys...")
+    typer.secho("Environment successfully created.", fg=typer.colors.GREEN)
+
+    typer.echo("Private key: " + typer.style(f"{private_key}", bold=True))
+    typer.echo("Private key (base64): " + typer.style(f"{private_key_b64}", bold=True))
+    typer.echo("Public key: " + typer.style(f"{public_key}", bold=True))
+    typer.echo("Public key (base64): " + typer.style(f"{public_key_b64}", bold=True))
 
 
 @app.command()

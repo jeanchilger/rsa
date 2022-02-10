@@ -18,4 +18,6 @@ def select_coprime(x: int) -> int:
     for y in range(3, x):
         if math.gcd(x, y) == 1:
             return y
+
+    return 2
         
