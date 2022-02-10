@@ -1,11 +1,14 @@
 import base64
 import sympy
 import typer
+from commands import env
 from pathlib import Path
 from src import rsa
 from utils import environ, file_helper
 
 app = typer.Typer()
+
+app.add_typer(env.app, name="env")
 
 
 @app.command()
@@ -99,7 +102,6 @@ def encrypt(
         file_helper.write_txt_file(dest, encrypted_text)
     else:
         typer.echo(encrypted_text)
-        
 
 
 @app.command()

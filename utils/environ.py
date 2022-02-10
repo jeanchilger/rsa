@@ -34,6 +34,39 @@ def delete_env() -> None:
     shutil.rmtree(app_dir)
 
 
+def get_env_config() -> configparser.ConfigParser:
+    """
+    Returns an instance of ConfigParser populated with
+    the configs of local environment.
+
+    Returns:
+        configparser.ConfigParser: Populated instance of ConfigParser.
+    """
+    
+    app_dir = typer.get_app_dir(APP_NAME)
+    config_path = Path(app_dir) / "config.cfg"
+    
+    config = configparser.ConfigParser(allow_no_value=True)
+    config.read(config_path)
+    
+    return config
+
+
+def read_config(section: str, key: str) -> str:
+    """
+    Reads a config from appdir.
+
+    Args:
+        section (str): Section from where config should be read.
+        key (str): Key from where config should be read.
+
+    Returns:
+        str: The value of specified config.
+    """
+    
+    return get_env_config().get(section, key)
+
+
 def set_config(section: str, key: str, value: str) -> None:
     """
     Sets a config in appdir.
@@ -57,24 +90,3 @@ def set_config(section: str, key: str, value: str) -> None:
     
     with open(config_path, "w") as cfg_file:
         config.write(cfg_file)
-
-
-def read_config(section: str, key: str) -> str:
-    """
-    Reads a config from appdir.
-
-    Args:
-        section (str): Section from where config should be read.
-        key (str): Key from where config should be read.
-
-    Returns:
-        str: The value of specified config.
-    """
-    
-    app_dir = typer.get_app_dir(APP_NAME)
-    config_path = Path(app_dir) / "config.cfg"
-    
-    config = configparser.ConfigParser(allow_no_value=True)
-    config.read(config_path)
-    
-    return config.get(section, key)
