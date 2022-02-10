@@ -1,20 +1,21 @@
 import math
 
-def select_smallest_coprime(x: int, lower: int, upper: int) -> int:
+def select_coprime(x: int) -> int:
     """
-    Returns the smallest coprime number of x,
-    that is larger than lower and greater than upper.
+    Returns a coprime number of x (that is smaller than x).
 
     Args:
         x (int): Number whose coprime must be obtained.
-        lower (int): Lower range bound. Defaults to 1.
-        upper (int): Upper range bound.
 
     Returns:
-        int: The smallest coprime of x between lower and upper.
+        int: A coprime number of x.
     """
     
-    for y in range(lower, upper, 1):
+    # 65537 is widely used
+    if x < 65537 and math.gcd(x, 65537) == 1:
+        return 65537
+    
+    for y in range(3, x):
         if math.gcd(x, y) == 1:
             return y
         
