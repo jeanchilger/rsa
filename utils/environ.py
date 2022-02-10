@@ -1,4 +1,5 @@
 import configparser
+import shutil
 import typer
 from pathlib import Path
 from utils import file_helper
@@ -22,6 +23,15 @@ def create_env() -> bool:
         return True
     else:
         return False
+
+
+def delete_env() -> None:
+    """
+    Deletes the environment.
+    """
+    
+    app_dir = typer.get_app_dir(APP_NAME)
+    shutil.rmtree(app_dir)
 
 
 def set_config(section: str, key: str, value: str) -> None:

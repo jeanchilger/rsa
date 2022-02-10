@@ -1,10 +1,8 @@
 import base64
 import typer
 from pathlib import Path
-from typing import Optional, Union
-
 from src import rsa
-from utils import environ
+from utils import environ, file_helper
 
 app = typer.Typer()
 
@@ -15,9 +13,16 @@ def init() -> None:
     Initializes an environment. Any needed configuration will be prompted.
     """
     
-    # if env already exists, init shouldn't be used
+    # if env already exists, asks for recreation
     if not environ.create_env():
-        raise typer.Exit()
+        recreate = typer.confirm("Configurations exists. Wish to rebuild them?")
+        
+        if recreate:
+            environ.delete_env()
+            environ.create_env()
+        
+        else:
+            raise typer.Exit()
     
     p = typer.prompt("Input the first prime number")
     q = typer.prompt("Input the second prime number")
@@ -28,11 +33,13 @@ def init() -> None:
     # generate the keys based on provided prime numbers
     private_key, public_key = rsa.generate_keys(int(p), int(q))
     
-    private_key_b64 = base64.b64encode(str(private_key).encode())
-    public_key_b64 = base64.b64encode(str(public_key).encode())
+    private_key_b64 = base64.b64encode(
+            f"{private_key[0]},{private_key[1]}".encode("utf-8"))
+    public_key_b64 = base64.b64encode(
+            f"{public_key[0]},{public_key[1]}".encode("utf-8"))
     
-    environ.set_config("keys", "private", str(private_key_b64))
-    environ.set_config("keys", "public", str(public_key_b64))
+    environ.set_config("keys", "private", private_key_b64.decode("utf-8"))
+    environ.set_config("keys", "public", public_key_b64.decode("utf-8"))
     
     typer.echo(f"Private key: {private_key}")
     typer.echo(f"Private key (base64): {private_key_b64}")
@@ -55,13 +62,32 @@ def encrypt(
         help="Public key to be used for encryptation. If omitted, the public key from environment will be used."
     )
 ) -> None:
-    """[summary]
-
-    Args:
-        src (str): [description]
-        dest (Path, optional): [description]. Defaults to None.
-        pkey (str, optional): [description]. Defaults to None.
     """
+    Encrypts a given text accordingly with RSA rules.
+    """
+    
+    input_text = None
+    if file_helper.is_path(src):
+        input_text = file_helper.read_txt_file(src)
+    else:
+        input_text = src
+    
+    key = None
+    if pkey is None:
+        key = environ.read_config("keys", "public")
+        
+    else:
+        key = pkey
+        
+    key = tuple(map(int, base64.b64decode(key).decode("utf-8").split(",")))
+    
+    encrypted_text = rsa.encrypt(input_text, key)
+    
+    if dest is not None:
+        file_helper.write_txt_file(dest, encrypted_text)
+    else:
+        typer.echo(encrypted_text)
+        
 
 
 @app.command()
@@ -79,7 +105,27 @@ def decrypt(
         help="Private key to be used for decryptation. If omitted, the private key from environment will be used."
     )
 ) -> None:
-    pass
+    input_text = None
+    if file_helper.is_path(src):
+        input_text = file_helper.read_txt_file(src)
+    else:
+        input_text = src
+    
+    key = None
+    if pkey is None:
+        key = environ.read_config("keys", "private")
+    else:
+        key = pkey
+    
+    key = tuple(map(int, base64.b64decode(key).decode("utf-8").split(",")))
+    
+    decrypted_text = rsa.decrypt(input_text, key)
+    
+    if dest is not None:
+        file_helper.write_txt_file(dest, decrypted_text)
+    else:
+        typer.echo(decrypted_text)
+
 
 if __name__ == "__main__":
     app()

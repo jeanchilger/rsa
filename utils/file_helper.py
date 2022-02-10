@@ -1,114 +1,101 @@
 import shutil
+from typing import Union
 from pathlib import Path
 
 
-def get_path(path: str) -> Path:
+def _get_path(path: Union[str, Path]) -> Path:
     """
-    Produces a Path for the given string path.
+    Produces a Path object for the given string path.
+    If input is already a Path object, returns it.
 
     Args:
-        path (str): Path as string.
+        path (Union[str, Path]): A path representation,
+            string or Path object.
 
     Returns:
         Path: Path object.
     """
 
-    return Path(path.replace("\\", "/"))
-
-
-def path_to_str(path: Path, absolute=True) -> str:
-    """
-    Returns the string representation for the given
-    Path object.
-
-    Args:
-        path (Path): Path object to be converted.
-        absolute (bool): Whether or not return the absolute path.
-
-    Returns:
-        str: String path representation.
-    """
-
-    return path.absolute().as_posix() if absolute else path.as_posix()
-
-
-def exists(path: str) -> bool:
-    """
-    Returns whether or not given path existis.
-
-    Args:
-        path (str): Path to check existence.
-
-    Returns:
-        bool: True if path exists, False otherwise.
-    """
-
-    _p = get_path(path)
+    if type(path) == str:
+        return Path(path.replace("\\", "/"))
     
-    return _p.exists()
+    return path
 
 
-def create_dir(path: str) -> None:
+def create_dir(path: Union[str, Path]) -> None:
     """
     Creates a folder, if not exists, at the given location.
     Parent folders that don't exists are also created.
 
     Args:
-        path (str): Path to create a new directory.
+        path (Union[str, Path]): Path to create a new directory.
     """
 
-    if not exists(path):
-        get_path(path).mkdir(parents=True)
+    _path = _get_path(path)
+
+    if not _path.exists():
+        _path.mkdir(parents=True)
 
 
-def create_file(path: str) -> None:
+def create_file(path: Union[str, Path]) -> None:
     """
     Creates an empty file at the given location.
 
     Args:
-        path (str): Path where the file should be created.
+        path (Union[str, Path]): Path where the file should be created.
     """
 
-    if not exists(path):
-        get_path(path).touch()
+    _path = _get_path(path)
+    _path.touch()
 
 
-def copy_dir(src: str, dest: str) -> None:
+def is_path(path: Union[str, Path]) -> bool:
     """
-    Copy a full directory from src to dest.
+    Returns whether or not the given path is a valid path.
+    To be valid, a path must lead to an existing location
+    and can't be an arbitrary text string.
 
     Args:
-        src (str): Source.
-        deset (str): Destination.
-    """
-
-    src_path = get_path(src)
-    dest_path = get_path(dest)
-    
-    shutil.copytree(src_path, dest_path)
-
-
-def copy_file(src: str, dest: str) -> None:
-    """
-    Copies a file from src to dest.
-
-    Args:
-        src (str): Source.
-        deset (str): Destination.
-    """
-
-    src_path = get_path(src)
-    dest_path = get_path(dest)
-    
-    shutil.copy(src_path, dest_path)
-
-
-def get_cwd() -> Path:
-    """
-    Returns the current working directory (cwd).
+        path (Union[str, Path]): Path to check validity
 
     Returns:
-        Path: cwd path.
+        bool: True if given path is valid. False otherwise.
     """
+    
+    try:
+        return _get_path(path).exists()
+    except:
+        return False
 
-    return Path.cwd()
+
+def read_txt_file(path: Union[str, Path]) -> str:
+    """
+    Reads a file as plain text, returning the contents as a string.
+
+    Args:
+        path (Union[str, Path]): Path to file.
+
+    Returns:
+        str: File contents as plain text.
+    """
+    
+    _path = _get_path(path)
+    
+    with open(_path, "r") as txt_file:
+        return txt_file.read().strip()
+
+
+def write_txt_file(path: Union[str, Path], content: str) -> None:
+    """
+    Writes the given content to the file at given location
+    as plain text.
+
+    Args:
+        path (Union[str, Path]): Path to file.
+        content (str): Text to write to file.
+    """
+    
+    _path = _get_path(path)
+    
+    with open(_path, "w") as txt_file:
+        txt_file.write(content)
