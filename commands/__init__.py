@@ -1,1 +1,0 @@
-from .init import main as init
