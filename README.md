@@ -82,6 +82,10 @@ The available options are:
 * `--pkey TEXT`: Private key to be used for decryptation. If omitted, the private key from environment will be used.
 * `--help`: Shows a help message.
 
+## File structure
+
+The main features are inside `src/` folder. The `commands/` folder gather larger subcommands. The `utils/` folder contains utility and helper minor functions.
+
 ## License
 
 This project is licensed under the MIT license. See [LICENSE](https://github.com/jeanchilger/rsa/blob/master/LICENSE) for more information.
